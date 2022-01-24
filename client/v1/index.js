@@ -333,3 +333,4 @@ console.log(jacket)
 // 2. log the localStorage
 
 localStorage.setItem("Favorites", JSON.stringify(MY_FAVORITE_BRANDS))
+console.log(localStorage);
