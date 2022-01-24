@@ -91,8 +91,8 @@ console.log(marketplace_by_date)
 
 let marketplace_range = marketplace.filter(item => 50 <= item.price & item.price <= 100);
 
-// 🎯 TODO: Average Basket
-// 1. Determine the average basket of the marketplace
+// 🎯 TODO: Average price
+// 1. Determine the average price of the marketplace
 // 2. Log the average
 
 let total = 0;

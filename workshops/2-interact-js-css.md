@@ -151,7 +151,7 @@ So that I can understand the price values of the products
 
 As a user<br>
 I want to indicate the last released date<br>
-So that I can understand if we
+So that I can understand if we have recent released products
 
 ### Feature 12 - Open product link
 
