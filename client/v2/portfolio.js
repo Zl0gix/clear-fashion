@@ -10,6 +10,7 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const selectBrand = document.querySelector('#brand-select');
 
 /**
  * Set global value
@@ -96,10 +97,19 @@ const renderIndicators = pagination => {
   spanNbProducts.innerHTML = count;
 };
 
+const renderBrands = products => {
+  if (products.length === currentProducts.length && products.every((value, index) => value === currentProducts[index])){
+    selectBrand.length = 0;
+    selectBrand[0] = new Option("all");
+    [...new Set(currentProducts.map(product => product.brand))].forEach(brand => selectBrand[selectBrand.length] = new Option(brand));
+  }
+}
+
 const render = (products, pagination) => {
   renderProducts(products);
   renderPagination(pagination);
   renderIndicators(pagination);
+  renderBrands(products);
 };
 
 /**
@@ -120,6 +130,12 @@ selectPage.addEventListener('change', event => {
   fetchProducts(parseInt(event.target.value), currentPagination.pageSize)
     .then(setCurrentProducts)
     .then(() => render(currentProducts, currentPagination));
+});
+
+selectBrand.addEventListener('change', event => {
+  fetchProducts(currentPagination.currentPage, currentPagination.pageSize)
+    .then(setCurrentProducts)
+    .then(() => render(currentProducts.filter(product => event.target.value!="all"? product.brand == event.target.value : true), currentPagination));
 });
 
 document.addEventListener('DOMContentLoaded', () =>
