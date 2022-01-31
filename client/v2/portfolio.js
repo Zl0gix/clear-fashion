@@ -3,6 +3,7 @@
 
 // current products on the page
 let currentProducts = [];
+let currentProductsToDisplay = [];
 let currentPagination = {};
 
 // inititiqte selectors
@@ -10,10 +11,11 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const spanNbDisplayedProducts = document.querySelector('#nbDisplayedProducts');
 const selectBrand = document.querySelector('#brand-select');
 const buttonPrice = document.querySelector('#price-button');
 const buttonRecently = document.querySelector('#recent-button');
-
+const selectSortOption = document.querySelector('#sort-select');
 
 /**
  * Set global value
@@ -98,20 +100,20 @@ const renderIndicators = pagination => {
   const {count} = pagination;
 
   spanNbProducts.innerHTML = count;
+  spanNbDisplayedProducts.innerHTML = currentProductsToDisplay.length;
 };
 
 const filterProducts = products => {
-  let toDisplay = [...products];
-  toDisplay = filterByBrands(products);
-  
+  currentProductsToDisplay = [...products];
+  currentProductsToDisplay = filterByBrands(products);
+
   if (buttonRecently.checked){
-    toDisplay = filterByRecent(toDisplay);
+    currentProductsToDisplay = filterByRecent(currentProductsToDisplay);
   }
 
   if (buttonPrice.checked){
-    toDisplay = filterByPrice(toDisplay);
+    currentProductsToDisplay = filterByPrice(currentProductsToDisplay);
   }
-  return toDisplay;
 }
 
 const filterByBrands = products => products.filter(product => selectBrand.value!="all"? product.brand == selectBrand.value : true);
@@ -128,9 +130,34 @@ const setFilterOptions = () => {
   buttonRecently.checked = false;
 }
 
+function sortByDateAsc(a, b) {
+  return new Date(a.released.split('-')) - new Date(b.released.split('-'));
+}
+
+const sortProducts = products => {
+  switch (selectSortOption.value) {
+    case "price-asc":
+      products.sort((a, b) => a.price - b.price);
+      break;
+    
+    case "price-desc":
+      products.sort((a, b) => b.price - a.price);
+      break;
+
+    case "date-asc":
+      products.sort((a, b) => new Date(a.released.split('-')) - new Date(b.released.split('-')));
+      break;
+
+    case "date-desc":
+      products.sort((a, b) => new Date(b.released.split('-')) - new Date(a.released.split('-')));
+      break;
+  }
+}
+
 const render = (products, pagination) => {
-  let productsToDisplay = filterProducts(products);
-  renderProducts(productsToDisplay);
+  filterProducts(products);
+  sortProducts(currentProductsToDisplay)
+  renderProducts(currentProductsToDisplay);
   renderPagination(pagination);
   renderIndicators(pagination);
 };
@@ -157,7 +184,7 @@ selectPage.addEventListener('change', event => {
     .then(() => render(currentProducts, currentPagination));
 });
 
-selectBrand.addEventListener('change', event => {
+selectBrand.addEventListener('change', () => {
   render(currentProducts, currentPagination)
 });
 
@@ -166,6 +193,10 @@ buttonRecently.addEventListener('change', () => {
 });
 
 buttonPrice.addEventListener('change', () => {
+  render(currentProducts, currentPagination)
+});
+
+selectSortOption.addEventListener('change', () => {
   render(currentProducts, currentPagination)
 });
 
