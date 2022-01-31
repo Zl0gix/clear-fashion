@@ -16,6 +16,7 @@ const spanNbNewDisplayedProducts = document.querySelector('#nbNewDisplayedProduc
 const spanP50 = document.querySelector('#p50');
 const spanP90 = document.querySelector('#p90');
 const spanP95 = document.querySelector('#p95');
+const spanLastDate = document.querySelector('#lastDate');
 const selectBrand = document.querySelector('#brand-select');
 const buttonPrice = document.querySelector('#price-button');
 const buttonRecently = document.querySelector('#recent-button');
@@ -118,10 +119,13 @@ const renderIndicators = pagination => {
     spanP50.innerHTML = temp[Math.floor(temp.length*(1-0.5))].price;
     spanP90.innerHTML = temp[Math.floor(temp.length*(1-0.9))].price;
     spanP95.innerHTML = temp[Math.floor(temp.length*(1-0.95))].price;
+    temp.sort((a, b) => new Date(a.released.split('-')) - new Date(b.released.split('-')));
+    spanLastDate.innerHTML = temp[temp.length - 1].released;
   } else {
     spanP50.innerHTML = "undefined";
     spanP90.innerHTML = "undefined";
     spanP95.innerHTML = "undefined";
+    spanLastDate.innerHTML = "undefined";
   }
 };
 
