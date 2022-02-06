@@ -7,10 +7,11 @@ let currentProductsToDisplay = [];
 let currentPagination = {};
 let favorites = []
 
-// inititiqte selectors
+// instantiate selectors
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
+const sectioncurrentProduct = document.querySelector('#currentProduct');
 const spanNbProducts = document.querySelector('#nbProducts');
 const spanNbDisplayedProducts = document.querySelector('#nbDisplayedProducts');
 const spanNbNewDisplayedProducts = document.querySelector('#nbNewDisplayedProducts');
@@ -58,6 +59,28 @@ const fetchProducts = async (page = 1, size = 12) => {
   }
 };
 
+const renderCurrentProduct = product => {
+  const fragment = document.createDocumentFragment();
+  const div = document.createElement('div');
+  const template = `
+      <div class="product" id=${product.uuid}>
+        <span>${product.brand}</span>
+        <a href="${product.link}" target="_blank">${product.name}</a>
+        <br>
+        <img src="${product.photo}" alt="Photo of the product">
+        <br>
+        <span>Prix : ${product.price}</span>
+        <br>
+        <span>Release date : ${product.released}</span>
+      </div>
+    `;
+
+  div.innerHTML = template;
+  fragment.appendChild(div);
+  sectioncurrentProduct.innerHTML = '<h2>Current product</h2>';
+  sectioncurrentProduct.appendChild(fragment);
+}
+
 /**
  * Render list of products
  * @param  {Array} products
@@ -69,6 +92,7 @@ const renderProducts = products => {
     .map(product => {
       return `
       <div class="product" id=${product.uuid}>
+        <input type="radio" id="radio-${product.uuid}" name="product-selector" value=${product.uuid}>
         <span>${product.brand}</span>
         <a href="${product.link}" target="_blank">${product.name}</a>
         <span>${product.price}</span>
@@ -81,6 +105,13 @@ const renderProducts = products => {
   fragment.appendChild(div);
   sectionProducts.innerHTML = '<h2>Products</h2>';
   sectionProducts.appendChild(fragment);
+  if (document.querySelector('input[name="product-selector"]')) {
+    document.querySelectorAll('input[name="product-selector"]').forEach((elem) => {
+      elem.addEventListener("change", event => {
+        renderCurrentProduct(products.find(p => p.uuid == event.target.value));
+      });
+    });
+  }
 };
 
 /**
@@ -193,11 +224,11 @@ const render = (products, pagination) => {
  * Select the number of products to display
  * @type {[type]}
  */
-selectShow.addEventListener('change', event => {
-  fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
-    .then(setCurrentProducts)
-    .then(setFilterOptions())
-    .then(() => render(currentProducts, currentPagination));
+selectShow.addEventListener('change', async (event) => {
+  const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
+  setCurrentProducts(products)
+  setFilterOptions()
+  render(currentProducts, currentPagination);
 });
 
 selectPage.addEventListener('change', event => {
@@ -223,9 +254,9 @@ selectSortOption.addEventListener('change', () => {
   render(currentProducts, currentPagination)
 });
 
-document.addEventListener('DOMContentLoaded', () =>
-  fetchProducts()
-    .then(setCurrentProducts)
-    .then(setFilterOptions)
-    .then(() => render(currentProducts, currentPagination))
-);
+document.addEventListener('DOMContentLoaded', async () => {
+  const products = await fetchProducts();
+  setCurrentProducts(products);
+  setFilterOptions();
+  render(currentProducts, currentPagination)
+});
