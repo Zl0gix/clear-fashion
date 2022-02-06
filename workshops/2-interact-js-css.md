@@ -131,15 +131,15 @@ So that I can easily identify recent and old products
 ### Feature 8 - Number of products indicator
 
 As a user<br>
-I want to indicate the number of displayed products<br>
+I want to indicate the total number of products<br>
 So that I can understand how many products is available
 
 
 ### Feature 9 - Number of recent products indicator
 
 As a user<br>
-I want to indicate the number of displayed products<br>
-So that I can understand how many new products is available
+I want to indicate the total number of recent products<br>
+So that I can understand how many new products are available
 
 ### Feature 10 - p50, p90 and p95 price value indicator
 
@@ -151,7 +151,7 @@ So that I can understand the price values of the products
 
 As a user<br>
 I want to indicate the last released date<br>
-So that I can understand if we have recent released products
+So that I can understand if we have new products
 
 ### Feature 12 - Open product link
 
@@ -159,19 +159,19 @@ As a user<br>
 I want to open product link in a new page<br>
 So that I can buy the product easily
 
-### Feature 12 - Save as favorite
+### Feature 13 - Save as favorite
 
 As a user<br>
 I want to save a product as favorite<br>
 So that I can retreive this product later
 
-### Feature 4 - Filter by favorite
+### Feature 14 - Filter by favorite
 
 As a user<br>
 I want to filter by favorite products<br>
 So that I can load only my favorite products
 
-### Feature 12 - Usable and pleasant UX
+### Feature 15 - Usable and pleasant UX
 
 As a user<br>
 I want to parse a usable and pleasant web page<br>
