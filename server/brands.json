@@ -1,14 +1,17 @@
 [
   {
     "brand": "DEDICATED",
+    "url" : "https://www.dedicatedbrand.com/en/men/news",
     "rating": 78
   },
   {
     "brand": "Montlimart",
+    "url" : "https://www.montlimart.com/toute-la-collection.html",
     "rating": 76
   },
   {
     "brand": "ADRESSE Paris",
+    "url" : "https://adresse.paris/630-toute-la-collection",
     "rating": 65
-  },
+  }
 ]
