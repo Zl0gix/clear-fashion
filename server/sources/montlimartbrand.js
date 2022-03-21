@@ -5,9 +5,10 @@ const cheerio = require('cheerio');
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
+ * @param  {String} brand - current brand
  * @return {Array} products
  */
-const parse = data => {
+const parse = (data, brand) => {
     const $ = cheerio.load(data);
 
     return $('.category-products .item')
@@ -22,27 +23,35 @@ const parse = data => {
                     .find('.price')
                     .text()
             );
-            return { name, price };
+            const url = $(element)
+                .find(".product-name")
+                .children('a')
+                .attr("href");
+            const image = $(element)
+                .find(".product-image")
+                .children('a')
+                .children("img")
+                .attr("src");
+            return { name, price, url, image, brand };
         })
         .get();
 };
 
 
-
-
 /**
  * Scrape all the products for a given url page
  * @param  {[type]}  url
+ * @param  {String} brand - current brand
  * @return {Array|null}
  */
-module.exports.scrape = async url => {
+module.exports.scrape = async (url, brand) => {
     try {
         const response = await fetch(url);
 
         if (response.ok) {
             const body = await response.text();
 
-            return parse(body);
+            return parse(body, brand);
         }
 
         console.error(response);

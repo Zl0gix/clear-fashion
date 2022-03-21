@@ -13,19 +13,19 @@ const brands = {
 
 const brandsList = require('./brands.json')
 
-async function sandbox (eshop, page=0) {
+async function sandbox (eshop, args) {
   try {
     console.log(`🕵️‍♀️  browsing ${eshop.brand} source`);
     let products = [];
-    if (page >= 2) {
+    if (args.page >= 2) {
       for (let i = 0; i < page; i++) {
-        products = products.concat(await brands[eshop.brand].scrape(eshop.url + "?p=" + page));
+        products = products.concat(await brands[eshop.brand].scrape(eshop.url + "?p=" + args.page, eshop.brand));
       }
     }
     else {
-      products = await brands[eshop.brand].scrape(eshop.url);
+      products = await brands[eshop.brand].scrape(eshop.url, eshop.brand);
     }
-    console.log(products);
+    console.log(products[0]);
     fs.writeFile(`${process.cwd()}/LocalData/${eshop.brand.replace(" ", "_")}.json`, JSON.stringify(products), err => {
       if (err) {
         console.error(err);
@@ -37,8 +37,6 @@ async function sandbox (eshop, page=0) {
     console.error(e);
   }
 }
-
-const [,, eshop] = process.argv;
 
 const folderName = process.cwd() + "/LocalData"
 
@@ -53,5 +51,19 @@ try {
 brandsList.forEach(async (b) => {
   console.log("Brand :");
   console.log(b);
-  await sandbox(b);
+  let args = {
+    "page": 0
+  }
+  switch (b.brand) {
+    case "DEDICATED":
+      await sandbox(b, args);
+      break;
+    case "Montlimart":
+      await sandbox(b, args);
+      break;
+    case "ADRESSE Paris":
+      await sandbox(b, args);
+      break;
+  }
+  
 })

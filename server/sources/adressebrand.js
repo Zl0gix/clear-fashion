@@ -4,9 +4,10 @@ const cheerio = require('cheerio');
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
+ * @param  {String} brand - current brand
  * @return {Array} products
  */
-const parse = data => {
+const parse = (data, brand) => {
     const $ = cheerio.load(data);
 
     return $('.product-container')
@@ -20,7 +21,18 @@ const parse = data => {
                     .find('.prixright')
                     .text()
             );
-            return { name, price };
+
+            const url = $(element)
+                .find('.product-name')
+                .attr('href');
+
+            const image = $(element)
+                .find(".product_img_link")
+                .children('img')
+                .eq(0)
+                .attr('data-original')
+
+            return { name, price, url, image, brand };
         })
         .get();
 };
@@ -28,16 +40,17 @@ const parse = data => {
 /**
  * Scrape all the products for a given url page
  * @param  {[type]}  url
+ * @param  {String} brand - current brand
  * @return {Array|null}
  */
-module.exports.scrape = async url => {
+module.exports.scrape = async (url, brand) => {
     try {
         const response = await fetch(url);
 
         if (response.ok) {
             const body = await response.text();
 
-            return parse(body);
+            return parse(body, brand);
         }
 
         console.error(response);
