@@ -1,6 +1,8 @@
 const cors = require('cors');
+const { response } = require('express');
 const express = require('express');
 const helmet = require('helmet');
+const db = require('./db');
 
 const PORT = 8092;
 
@@ -17,6 +19,36 @@ app.options('*', cors());
 app.get('/', (request, response) => {
   response.send({'ack': true});
 });
+
+app.get('/products/search', async (request, response) => {
+  console.log("GET /products/search");
+  console.log(request.query);
+
+  const LIMIT = request.query.limit;
+  const BRAND = request.query.brand;
+  const PRICE = request.query.price;
+
+  let query = {};
+  let options = {"limit": 12};
+  if (LIMIT != undefined) {
+    options.limit = parseInt(LIMIT)
+  } 
+  if (BRAND != undefined) {
+    query.brand = BRAND;
+  }
+  if (PRICE != undefined) {
+    query.price = {"$lte": parseFloat(PRICE)}
+  }
+  const results = await db.find(query, options);
+  response.json({ query, options, "total" : results.length, results});
+})
+
+app.get('/products/:id', async (request, response) => {
+  console.log("GET /products/:id");
+  console.log(request.params)
+  const result = await db.find({"_id" : request.params.id});
+  response.json(result);
+})
 
 app.listen(PORT);
 
