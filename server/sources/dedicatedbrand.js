@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const crypto = require('crypto');
 
 /**
  * Parse webpage e-shop
@@ -10,7 +11,7 @@ const cheerio = require('cheerio');
  */
 const parse = (data, base_url, brand) => {
   const $ = cheerio.load(data);
-
+  const hash = crypto.createHash('sha256');
   return $('.productList-container .productList')
     .map((i, element) => {
       const name = $(element)
@@ -31,7 +32,17 @@ const parse = (data, base_url, brand) => {
         .children('img')
         .eq(0)
         .attr('data-src');
-      return {name, price, url, image, brand};
+
+      let _id;
+      if (url == undefined){
+          _id = undefined;
+      } else {
+          let tempHash = hash.copy();
+          tempHash.update(url);
+          _id = tempHash.digest("hex");
+      }
+      
+      return {_id, name, price, url, image, brand};
     })
     .get();
 };
