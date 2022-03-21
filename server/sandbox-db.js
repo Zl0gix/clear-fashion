@@ -16,7 +16,7 @@ async function sandboxDB () {
     const DEDICATEDOnly = await db.find({'brand': 'DEDICATED'});
     const lessThan40 = await db.find({'price': { '$lt': 40}});
     const allProductsOrdered1 = await db.aggregate([{"$sort": {'price' : 1}}]);
-    const allProductsOrdered2 = await db.find({}, {'price' : 1});
+    const allProductsOrdered2 = await db.find({}, {"sort" : {'price' : 1}});
 
     console.log(`👕 ${DEDICATEDOnly.length} total of products found for DEDICATED`);
     console.log(DEDICATEDOnly[0]);
