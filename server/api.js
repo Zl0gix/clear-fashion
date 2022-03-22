@@ -42,7 +42,7 @@ app.get('/all_products', async (request, response) => {
   console.log(request.query);
 
   const PAGE = (request.query.page != undefined) && (request.query.page != "0")? parseInt(request.query.page) : 1;
-  const SIZE = request.query.size != undefined? parseInt(SIZE) : 12;
+  const SIZE = request.query.size != undefined? parseInt(request.query.size) : 12;
 
   let query = {};
   let options = {
