@@ -37,6 +37,33 @@ app.post('/products', async (request, response) => {
   response.send("Unkown method");
 })
 
+app.get('/all_products', async (request, response) => {
+  console.log("GET /all_products");
+  console.log(request.query);
+
+  const PAGE = (request.query.page != undefined) && (request.query.page != "0")? parseInt(request.query.page) : 1;
+  const SIZE = request.query.size != undefined? parseInt(SIZE) : 12;
+
+  let query = {};
+  let options = {
+    "limit": SIZE,
+    "skip" : (PAGE-1)*options.limit
+  }
+
+  const results = await db.find(query, options);
+  response.json({
+    "data": {
+      "meta": {
+        "currentPage": PAGE,
+        "pageSize": SIZE
+      },
+      "result": results
+    },
+    "success": true
+  })
+  //response.json({ query, options, "total" : results.length, results});
+})
+
 app.get('/products/search', async (request, response) => {
   console.log("GET /products/search");
   console.log(request.query);
