@@ -46,7 +46,7 @@ const fetchProducts = async (page = 1, size = 12) => {
       `https://clear-fashion-sable.vercel.app/all_products?page=${page}&size=${size}`,
       {
         "Access-Control-Allow-Origin": "*",
-        "mode": "no-cors"
+        "Cross-Origin-Resource-Policy": "cross-origin"
       }
     );
     const body = await response.json();
