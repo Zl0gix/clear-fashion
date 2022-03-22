@@ -43,10 +43,10 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      `https://clear-fashion-sable.vercel.app/all_products?page=${page}&size=${size}`
     );
     const body = await response.json();
-
+    console.log(body);
     if (body.success !== true) {
       console.error(body);
       return {currentProducts, currentPagination};
@@ -63,15 +63,13 @@ const renderCurrentProduct = product => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
   const template = `
-      <div class="product" id=${product.uuid}>
-        <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
-        <br>
-        <img src="${product.photo}" alt="Photo of the product">
-        <br>
-        <span>Prix : ${product.price}</span>
-        <br>
-        <span>Release date : ${product.released}</span>
+      <div class="product card" id=${product._id}>
+        <img class="card-img-top" src="${product.image}" alt="image of the product">
+        <div class="card-body">
+          <h5 class="card-title"><i>${product.brand}</i> : <u>${product.name}</u><h5>
+          <p class="card-text">Prix : ${product.price}€<br>Date de scrapping : ${product.date}</p>
+          <a class="btn btn-primary" href="${product.url}" target="_blank">See the product</a>
+        </div>
       </div>
     `;
 
@@ -91,10 +89,10 @@ const renderProducts = products => {
   const template = products
     .map(product => {
       return `
-      <div class="product" id=${product.uuid}>
-        <input type="radio" id="radio-${product.uuid}" name="product-selector" value=${product.uuid}>
+      <div class="product" id=${product._id}>
+        <input type="radio" id="radio-${product._id}" name="product-selector" value=${product._id}>
         <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
+        <a href="${product.url}" target="_blank">${product.name}</a>
         <span>${product.price}</span>
       </div>
     `;
@@ -108,7 +106,7 @@ const renderProducts = products => {
   if (document.querySelector('input[name="product-selector"]')) {
     document.querySelectorAll('input[name="product-selector"]').forEach((elem) => {
       elem.addEventListener("change", event => {
-        renderCurrentProduct(products.find(p => p.uuid == event.target.value));
+        renderCurrentProduct(products.find(p => p._id == event.target.value));
       });
     });
   }
@@ -140,7 +138,7 @@ const renderIndicators = pagination => {
   spanNbDisplayedProducts.innerHTML = currentProductsToDisplay.length;
   let newProductsCount = 0;
   currentProductsToDisplay.forEach(product => {
-    if ((new Date().setHours(0, 0, 0, 0) - new Date(product.released.split('-')).getTime()) > 1209600000) {
+    if ((new Date().setHours(0, 0, 0, 0) - new Date(product.date.split('-')).getTime()) > 1209600000) {
       newProductsCount++;
     }
   });
@@ -151,8 +149,8 @@ const renderIndicators = pagination => {
     spanP50.innerHTML = temp[Math.floor(temp.length*(1-0.5))].price;
     spanP90.innerHTML = temp[Math.floor(temp.length*(1-0.9))].price;
     spanP95.innerHTML = temp[Math.floor(temp.length*(1-0.95))].price;
-    temp.sort((a, b) => new Date(a.released.split('-')) - new Date(b.released.split('-')));
-    spanLastDate.innerHTML = temp[temp.length - 1].released;
+    temp.sort((a, b) => new Date(a.date.split('-')) - new Date(b.date.split('-')));
+    spanLastDate.innerHTML = temp[temp.length - 1].date;
   } else {
     spanP50.innerHTML = "undefined";
     spanP90.innerHTML = "undefined";
@@ -176,7 +174,7 @@ const filterProducts = products => {
 
 const filterByBrands = products => products.filter(product => selectBrand.value!="all"? product.brand == selectBrand.value : true);
 
-const filterByRecent = products => products.filter(product => (new Date().setHours(0, 0, 0, 0) - new Date(product.released.split('-')).getTime()) > 1209600000);
+const filterByRecent = products => products.filter(product => (new Date().setHours(0, 0, 0, 0) - new Date(product.date.split('-')).getTime()) > 1209600000);
 
 const filterByPrice = products => products.filter(product => product.price < 50);
 
@@ -199,11 +197,11 @@ const sortProducts = products => {
       break;
 
     case "date-asc":
-      products.sort((a, b) => new Date(a.released.split('-')) - new Date(b.released.split('-')));
+      products.sort((a, b) => new Date(a.date.split('-')) - new Date(b.date.split('-')));
       break;
 
     case "date-desc":
-      products.sort((a, b) => new Date(b.released.split('-')) - new Date(a.released.split('-')));
+      products.sort((a, b) => new Date(b.date.split('-')) - new Date(a.date.split('-')));
       break;
   }
 }

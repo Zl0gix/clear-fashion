@@ -33,74 +33,84 @@
     </nav>
   </header>
   <div class="container">
-    <h1>Clear fashion</h1>
-    <section id="options">
-      <div id="show">
-        <label for="show-select">Show:</label>
-        <select name="show" id="show-select">
-          <option value="12">12</option>
-          <option value="24">24</option>
-          <option value="48">48</option>
-        </select>
+    <h1 class="d-flex justify-content-center">Clear fashion</h1>
+    <br>
+    <div class="row">
+      <div class="col">
+        <section id="options">
+          <h2>Options</h2>
+          <div id="show">
+            <label for="show-select">Show:</label>
+            <select name="show" id="show-select">
+              <option value="12">12</option>
+              <option value="24">24</option>
+              <option value="48">48</option>
+            </select>
+          </div>
+          <div id="page">
+            <label for="page-select">Go to page:</label>
+            <select name="page" id="page-select"> </select>
+          </div>
+          <div id="filters">
+            <label for="price-button">Filter by reasonable price : </label>
+            <input type="checkbox" id="price-button">
+            <br>
+            <label for="price-button">Filter by recently released : </label>
+            <input type="checkbox" id="recent-button">
+            <div id="brand">
+              <label for="brand-select">By brands:</label>
+              <select name="brand" id="brand-select"> </select>
+            </div>
+          </div>
+          <div id="sort">
+            <label for="sort-select">Sort:</label>
+            <select name="sort" id="sort-select">
+              <option value="price-asc">Cheaper</option>
+              <option value="price-desc">Expensive</option>
+              <option value="date-asc">Recently released</option>
+              <option value="date-desc">Anciently released</option>
+            </select>
+          </div>
+        </section>
+        <section id="indicators">
+          <br>
+          <h2>Indicators</h2>
+          <div>
+            <span>Number of products : </span>
+            <span id="nbProducts">0</span>
+          </div>
+          <div>
+            <span>Number of displayed products : </span>
+            <span id="nbDisplayedProducts">0</span>
+          </div>
+          <div>
+            <span>Number of new products : </span>
+            <span id="nbNewDisplayedProducts">0</span>
+          </div>
+          <div>
+            <span>p50 price value : </span>
+            <span id="p50">0</span>
+          </div>
+          <div>
+            <span>p90 price value : </span>
+            <span id="p90">0</span>
+          </div>
+          <div>
+            <span>p95 price value : </span>
+            <span id="p95">0</span>
+          </div>
+          <div>
+            <span>Last released date : </span>
+            <span id="lastDate">2020-01-01</span>
+          </div>
+          <br>
+        </section>
+        <section id="products"></section>
       </div>
-      <div id="page">
-        <label for="page-select">Go to page:</label>
-        <select name="page" id="page-select"> </select>
+      <div class="col">
+        <section id="currentProduct"></section>
       </div>
-      <div id="filters">
-        <label for="price-button">Filter by reasonable price : </label>
-        <input type="checkbox" id="price-button">
-        <br>
-        <label for="price-button">Filter by recently released : </label>
-        <input type="checkbox" id="recent-button">
-        <div id="brand">
-          <label for="brand-select">By brands:</label>
-          <select name="brand" id="brand-select"> </select>
-        </div>
-      </div>
-      <div id="sort">
-        <label for="sort-select">Sort:</label>
-        <select name="sort" id="sort-select">
-          <option value="price-asc">Cheaper</option>
-          <option value="price-desc">Expensive</option>
-          <option value="date-asc">Recently released</option>
-          <option value="date-desc">Anciently released</option>
-        </select>
-      </div>
-    </section>
-    <section id="indicators">
-      <h2>Indicators</h2>
-      <div>
-        <span>Number of products : </span>
-        <span id="nbProducts">0</span>
-      </div>
-      <div>
-        <span>Number of displayed products : </span>
-        <span id="nbDisplayedProducts">0</span>
-      </div>
-      <div>
-        <span>Number of new products : </span>
-        <span id="nbNewDisplayedProducts">0</span>
-      </div>
-      <div>
-        <span>p50 price value : </span>
-        <span id="p50">0</span>
-      </div>
-      <div>
-        <span>p90 price value : </span>
-        <span id="p90">0</span>
-      </div>
-      <div>
-        <span>p95 price value : </span>
-        <span id="p95">0</span>
-      </div>
-      <div>
-        <span>Last released date : </span>
-        <span id="lastDate">2020-01-01</span>
-      </div>
-    </section>
-    <section id="products"></section>
-    <section id="currentProduct"></section>
+    </div>
     <script type="text/javascript" charset="UTF-8" src="portfolio.js"></script>
   </div>
   <footer class="border-top footer text-muted">
