@@ -44,7 +44,10 @@ const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
       `https://clear-fashion-sable.vercel.app/all_products?page=${page}&size=${size}`,
-      {"Access-Control-Allow-Origin": "*"}
+      {
+        "Access-Control-Allow-Origin": "*",
+        "mode": "no-cors"
+      }
     );
     const body = await response.json();
     console.log(body);
