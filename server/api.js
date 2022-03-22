@@ -47,7 +47,7 @@ app.get('/all_products', async (request, response) => {
   let query = {};
   let options = {
     "limit": SIZE,
-    "skip" : (PAGE-1)*options.limit
+    "skip" : (PAGE-1)*SIZE
   }
 
   const results = await db.find(query, options);
