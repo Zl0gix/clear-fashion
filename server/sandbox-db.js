@@ -51,4 +51,10 @@ async function insert_in_db() {
   console.log(`💽  ${result.insertedCount} inserted products`);
 }
 
+async function upsert_to_db() {
+  let temp_products = brandsList.map(eshop => JSON.parse(fs.readFileSync(`LocalData/${eshop.brand.replace(" ", "_")}.json`)));
+  const products = (await Promise.all(temp_products)).flat();
+  
+}
+
 sandboxDB();

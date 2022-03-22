@@ -3,6 +3,9 @@ const { response } = require('express');
 const express = require('express');
 const helmet = require('helmet');
 const db = require('./db');
+const brandsList = require('./brands.json')
+const fs = require('fs');
+const sandbox = require('./sandbox');
 
 const PORT = 8092;
 
@@ -19,6 +22,20 @@ app.options('*', cors());
 app.get('/', (request, response) => {
   response.send({'ack': true});
 });
+
+app.post('/products', async (request, response) => {
+  console.log("POST /products");
+  console.log(request.body);
+  if (request.body.method == 'upsert'){
+    await sandbox.writeAllToFile();
+    let temp_products = brandsList.map(eshop => JSON.parse(fs.readFileSync(`LocalData/${eshop.brand.replace(" ", "_")}.json`)));
+    const products = (await Promise.all(temp_products)).flat();
+    const count = await db.upsert(products);
+    response.send(`Updated ${count} products on ${products.length} scrapped products`);
+    return
+  }
+  response.send("Unkown method");
+})
 
 app.get('/products/search', async (request, response) => {
   console.log("GET /products/search");

@@ -82,7 +82,35 @@ module.exports.find = async (query, options) => {
     const result = await collection.aggregate(query).toArray();
     return result;
   } catch (error) {
-    console.error('🚨 collection.find...', error);
+    console.error('🚨 collection.aggregate...', error);
+    return null;
+  }
+};
+
+/**
+ * Aggregate products based on query
+ * @param  {Array} products
+ * @return {Array}
+ */
+ module.exports.upsert = async (products) => {
+  try {
+    const db = await getDB();
+    const collection = db.collection(MONGODB_COLLECTION);
+    let count = 0;
+
+    const upsertPromises = products.map(async product => {
+      console.log(product);
+      let result = await collection.updateOne({ '_id': product._id}, { "$set" : product}, {'upsert': true});
+      return result.modifiedCount;
+    });
+    
+    await Promise.all(upsertPromises).then(modifiedCounts => {
+      count = modifiedCounts.reduce((a, b) => a+b, 0);
+    });
+    console.log(`Updated ${count} document(s)`);
+    return count;
+  } catch (error) {
+    console.error('🚨 collection.upsert...', error);
     return null;
   }
 };

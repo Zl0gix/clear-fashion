@@ -33,7 +33,10 @@ module.exports.getProducts = async function getProducts (eshop, args) {
     const uids = [...new Set(filtered_products.map(p => p._id))]
     const no_duplicates = uids.map(id => filtered_products.find(product => product._id === id))
     console.log(`Done browsing ${eshop.brand} source`);
-    return no_duplicates
+    return no_duplicates.map(product => {
+      product.date = new Date().toISOString().split('T')[0];
+      return product;
+    })
   } catch (e) {
     console.error(e);
   }
@@ -55,31 +58,23 @@ module.exports.writeToFile = async function writeToFile(eshop, args) {
   checkFolders();
   const products = await this.getProducts(eshop, args);
   console.log(`Writing ${eshop.brand} data to file`)
-  fs.writeFile(`${process.cwd()}/LocalData/${eshop.brand.replace(" ", "_")}.json`, JSON.stringify(products), err => {
-    if (err) {
-      console.error(err);
-      return
-    }
-  });
+  fs.writeFileSync(`${process.cwd()}/LocalData/${eshop.brand.replace(" ", "_")}.json`, JSON.stringify(products));
   console.log(`Done writing ${eshop.brand} data to file`)
 }
 
 module.exports.writeAllToFile = async function writeAllToFile() {
   checkFolders();
   
-  brandsList.forEach(async (eshop) => {
+  return await Promise.all(brandsList.map(async (eshop) => {
     console.log("Brand :");
     console.log(eshop);
     switch (eshop.brand) {
       case "DEDICATED":
-        this.writeToFile(eshop, { "page": 0 });
-        break;
+        return await this.writeToFile(eshop, { "page": 0 });
       case "Montlimart":
-        this.writeToFile(eshop, { "page": 0 });
-        break;
+        return await this.writeToFile(eshop, { "page": 0 });
       case "ADRESSE Paris":
-        this.writeToFile(eshop, { "page": 0 });
-        break;
+        return await this.writeToFile(eshop, { "page": 0 });
     }
-  })
+  }));
 }
