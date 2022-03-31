@@ -51,9 +51,13 @@ app.get('/all_products', async (request, response) => {
   }
 
   const results = await db.find(query, options);
+
+  const COUNT = Math.ceil(results.length);
+
   response.json({
     "data": {
       "meta": {
+        "pageCount": COUNT,
         "currentPage": PAGE,
         "pageSize": SIZE
       },
