@@ -8,6 +8,8 @@ let currentPagination = {};
 let favorites = []
 
 // instantiate selectors
+const buttonRefresh = document.querySelector('#refresh-button');
+const labelRefresh = document.querySelector('#refresh-label');
 const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
@@ -29,7 +31,7 @@ const selectSortOption = document.querySelector('#sort-select');
  * @param {Array} result - products to display
  * @param {Object} meta - pagination meta info
  */
-const setCurrentProducts = ({result, meta}) => {
+const setCurrentProducts = ({ result, meta }) => {
   currentProducts = result;
   currentPagination = meta;
 };
@@ -53,13 +55,13 @@ const fetchProducts = async (page = 1, size = 12) => {
     console.log(body);
     if (body.success !== true) {
       console.error(body);
-      return {currentProducts, currentPagination};
+      return { currentProducts, currentPagination };
     }
 
     return body.data;
   } catch (error) {
     console.error(error);
-    return {currentProducts, currentPagination};
+    return { currentProducts, currentPagination };
   }
 };
 
@@ -96,7 +98,7 @@ const renderProducts = products => {
       <div class="product" id=${product._id}>
         <input type="radio" id="radio-${product._id}" name="product-selector" value=${product._id}>
         <span>${product.brand}</span>
-        <a href="${product.url}" target="_blank">${product.name}</a>
+        <a>${product.name}</a>
         <span>${product.price}</span>
       </div>
     `;
@@ -121,9 +123,9 @@ const renderProducts = products => {
  * @param  {Object} pagination
  */
 const renderPagination = pagination => {
-  const {currentPage, pageCount} = pagination;
+  const { currentPage, pageCount } = pagination;
   const options = Array.from(
-    {'length': pageCount},
+    { 'length': pageCount },
     (value, index) => `<option value="${index + 1}">${index + 1}</option>`
   ).join('');
 
@@ -136,7 +138,7 @@ const renderPagination = pagination => {
  * @param  {Object} pagination
  */
 const renderIndicators = pagination => {
-  const {count} = pagination;
+  const { count } = pagination;
 
   spanNbProducts.innerHTML = count;
   spanNbDisplayedProducts.innerHTML = currentProductsToDisplay.length;
@@ -147,12 +149,12 @@ const renderIndicators = pagination => {
     }
   });
   spanNbNewDisplayedProducts.innerHTML = newProductsCount;
-  if (currentProductsToDisplay.length >= 1){
+  if (currentProductsToDisplay.length >= 1) {
     let temp = [...currentProductsToDisplay];
     temp.sort((a, b) => a.price - b.price);
-    spanP50.innerHTML = temp[Math.floor(temp.length*(1-0.5))].price;
-    spanP90.innerHTML = temp[Math.floor(temp.length*(1-0.9))].price;
-    spanP95.innerHTML = temp[Math.floor(temp.length*(1-0.95))].price;
+    spanP50.innerHTML = temp[Math.floor(temp.length * (1 - 0.5))].price;
+    spanP90.innerHTML = temp[Math.floor(temp.length * (1 - 0.9))].price;
+    spanP95.innerHTML = temp[Math.floor(temp.length * (1 - 0.95))].price;
     temp.sort((a, b) => new Date(a.date.split('-')) - new Date(b.date.split('-')));
     spanLastDate.innerHTML = temp[temp.length - 1].date;
   } else {
@@ -167,16 +169,16 @@ const filterProducts = products => {
   currentProductsToDisplay = [...products];
   currentProductsToDisplay = filterByBrands(products);
 
-  if (buttonRecently.checked){
+  if (buttonRecently.checked) {
     currentProductsToDisplay = filterByRecent(currentProductsToDisplay);
   }
 
-  if (buttonPrice.checked){
+  if (buttonPrice.checked) {
     currentProductsToDisplay = filterByPrice(currentProductsToDisplay);
   }
 }
 
-const filterByBrands = products => products.filter(product => selectBrand.value!="all"? product.brand == selectBrand.value : true);
+const filterByBrands = products => products.filter(product => selectBrand.value != "all" ? product.brand == selectBrand.value : true);
 
 const filterByRecent = products => products.filter(product => (new Date().setHours(0, 0, 0, 0) - new Date(product.date.split('-')).getTime()) > 1209600000);
 
@@ -195,7 +197,7 @@ const sortProducts = products => {
     case "price-asc":
       products.sort((a, b) => a.price - b.price);
       break;
-    
+
     case "price-desc":
       products.sort((a, b) => b.price - a.price);
       break;
@@ -225,6 +227,26 @@ const render = (products, pagination) => {
 /**
  * Select the number of products to display
  */
+
+buttonRefresh.addEventListener('click', async () => {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "https://clear-fashion-sable.vercel.app/products", true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('Access-Control-Allow-Origin', "*");
+  xhr.onreadystatechange = () => {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      labelRefresh.innerHTML = this.responseText;
+      setTimeout(() => {
+        labelRefresh.innerHTML = "";
+      }, 5000);
+    }
+  }
+  xhr.send(JSON.stringify({
+    method: "upsert"
+  }));
+  // TODO : REPAIR CORS POLICY BULLSHIT
+})
+
 selectShow.addEventListener('change', async (event) => {
   const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value))
   setCurrentProducts(products)
